@@ -28,9 +28,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BH.Adapter.SoftwareName
+namespace BH.Adapter.Miro
 {
-    public partial class SoftwareNameAdapter : BHoMAdapter
+    public partial class MiroAdapter : BHoMAdapter
     {
         // NOTE: CRUD folder methods
         // All methods in the CRUD folder are used as "back-end" methods by the Adapter itself.
