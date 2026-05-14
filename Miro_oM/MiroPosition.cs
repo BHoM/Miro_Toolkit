@@ -20,37 +20,22 @@
  * along with this code. If not, see <https://www.gnu.org/licenses/lgpl-3.0.html>.
  */
 
-using BH.Adapter;
-using BH.oM.Adapter;
-using BH.oM.Base;
-using System.Collections.Generic;
+using System.ComponentModel;
 
-namespace BH.Adapter.Miro
+namespace BH.oM.Adapters.Miro
 {
-    public partial class MiroAdapter : BHoMAdapter
+    [Description("Position of an item on a Miro board, expressed in device-independent pixels (dp).")]
+    public class MiroPosition
     {
         /***************************************************/
-        /**** Adapter overload method                   ****/
+        /**** Properties                                ****/
         /***************************************************/
 
-        protected override bool ICreate<T>(IEnumerable<T> objects, ActionConfig actionConfig = null)
-        {
-            bool success = true;
-            foreach (T obj in objects)
-            {
-                success &= Create(obj as dynamic);
-            }
-            return success;
-        }
+        [Description("Horizontal coordinate in dp. Positive values extend to the right.")]
+        public virtual double X { get; set; } = 0.0;
 
-        /***************************************************/
-
-        protected bool Create(IBHoMObject obj)
-        {
-            BH.Engine.Base.Compute.RecordError($"No specific Create method is implemented in the Miro adapter for objects of type '{obj?.GetType().Name}'. \n" +
-                "Supported types are: MiroBoard, MiroStickyNote, MiroShape, MiroText.");
-            return false;
-        }
+        [Description("Vertical coordinate in dp. Positive values extend downward.")]
+        public virtual double Y { get; set; } = 0.0;
 
         /***************************************************/
     }

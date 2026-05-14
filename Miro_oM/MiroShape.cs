@@ -20,37 +20,26 @@
  * along with this code. If not, see <https://www.gnu.org/licenses/lgpl-3.0.html>.
  */
 
-using BH.Adapter;
-using BH.oM.Adapter;
-using BH.oM.Base;
-using System.Collections.Generic;
+using System.ComponentModel;
 
-namespace BH.Adapter.Miro
+namespace BH.oM.Adapters.Miro
 {
-    public partial class MiroAdapter : BHoMAdapter
+    [Description("A geometric shape item on a Miro board. Shapes can contain optional text labels \n" +
+        "and support a wide range of outline types suitable for diagrams and flowcharts.")]
+    public class MiroShape : MiroItem
     {
         /***************************************************/
-        /**** Adapter overload method                   ****/
+        /**** Properties                                ****/
         /***************************************************/
 
-        protected override bool ICreate<T>(IEnumerable<T> objects, ActionConfig actionConfig = null)
-        {
-            bool success = true;
-            foreach (T obj in objects)
-            {
-                success &= Create(obj as dynamic);
-            }
-            return success;
-        }
+        [Description("Geometric shape type that determines the outline of this item.")]
+        public virtual MiroShapeType ShapeType { get; set; } = MiroShapeType.Rectangle;
 
-        /***************************************************/
+        [Description("Optional text label displayed inside the shape. Supports basic HTML formatting.")]
+        public virtual string Content { get; set; } = "";
 
-        protected bool Create(IBHoMObject obj)
-        {
-            BH.Engine.Base.Compute.RecordError($"No specific Create method is implemented in the Miro adapter for objects of type '{obj?.GetType().Name}'. \n" +
-                "Supported types are: MiroBoard, MiroStickyNote, MiroShape, MiroText.");
-            return false;
-        }
+        [Description("Visual style properties controlling fill, border, and text appearance of the shape.")]
+        public virtual MiroShapeStyle Style { get; set; } = new MiroShapeStyle();
 
         /***************************************************/
     }

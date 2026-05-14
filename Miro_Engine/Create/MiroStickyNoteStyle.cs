@@ -20,36 +20,34 @@
  * along with this code. If not, see <https://www.gnu.org/licenses/lgpl-3.0.html>.
  */
 
-using BH.Adapter;
-using BH.oM.Adapter;
-using BH.oM.Base;
-using System.Collections.Generic;
+using BH.oM.Adapters.Miro;
+using BH.oM.Base.Attributes;
+using System.ComponentModel;
 
-namespace BH.Adapter.Miro
+namespace BH.Engine.Adapters.Miro
 {
-    public partial class MiroAdapter : BHoMAdapter
+    public static partial class Create
     {
         /***************************************************/
-        /**** Adapter overload method                   ****/
+        /**** Public Methods                            ****/
         /***************************************************/
 
-        protected override bool ICreate<T>(IEnumerable<T> objects, ActionConfig actionConfig = null)
+        [Description("Creates a MiroStickyNoteStyle object defining the visual appearance of a sticky note.")]
+        [Input("fillColour", "Background colour of the sticky note chosen from the named colour list.")]
+        [Input("textAlign", "Horizontal alignment of the text within the sticky note.")]
+        [Input("textAlignVertical", "Vertical alignment of the text within the sticky note.")]
+        [Output("style", "A MiroStickyNoteStyle object to pass to the MiroStickyNote Create component.")]
+        public static MiroStickyNoteStyle MiroStickyNoteStyle(
+            MiroStickyNoteColour fillColour = MiroStickyNoteColour.LightYellow,
+            MiroTextAlign textAlign = MiroTextAlign.Center,
+            MiroTextAlignVertical textAlignVertical = MiroTextAlignVertical.Top)
         {
-            bool success = true;
-            foreach (T obj in objects)
+            return new MiroStickyNoteStyle
             {
-                success &= Create(obj as dynamic);
-            }
-            return success;
-        }
-
-        /***************************************************/
-
-        protected bool Create(IBHoMObject obj)
-        {
-            BH.Engine.Base.Compute.RecordError($"No specific Create method is implemented in the Miro adapter for objects of type '{obj?.GetType().Name}'. \n" +
-                "Supported types are: MiroBoard, MiroStickyNote, MiroShape, MiroText.");
-            return false;
+                FillColour = fillColour,
+                TextAlign = textAlign,
+                TextAlignVertical = textAlignVertical
+            };
         }
 
         /***************************************************/

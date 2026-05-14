@@ -20,36 +20,35 @@
  * along with this code. If not, see <https://www.gnu.org/licenses/lgpl-3.0.html>.
  */
 
-using BH.Adapter;
-using BH.oM.Adapter;
-using BH.oM.Base;
+using BH.oM.Adapters.Miro;
+using Newtonsoft.Json.Linq;
 using System.Collections.Generic;
 
 namespace BH.Adapter.Miro
 {
-    public partial class MiroAdapter : BHoMAdapter
+    public static partial class Convert
     {
         /***************************************************/
-        /**** Adapter overload method                   ****/
+        /**** Public Methods - ToMiro                   ****/
         /***************************************************/
 
-        protected override bool ICreate<T>(IEnumerable<T> objects, ActionConfig actionConfig = null)
+        public static string ToMiro(this MiroBoard board)
         {
-            bool success = true;
-            foreach (T obj in objects)
+            var body = new JObject
             {
-                success &= Create(obj as dynamic);
-            }
-            return success;
-        }
+                ["name"] = board.Name
+            };
 
-        /***************************************************/
+            if (!string.IsNullOrEmpty(board.Description))
+                body["description"] = board.Description;
 
-        protected bool Create(IBHoMObject obj)
-        {
-            BH.Engine.Base.Compute.RecordError($"No specific Create method is implemented in the Miro adapter for objects of type '{obj?.GetType().Name}'. \n" +
-                "Supported types are: MiroBoard, MiroStickyNote, MiroShape, MiroText.");
-            return false;
+            if (!string.IsNullOrEmpty(board.TeamId))
+                body["teamId"] = board.TeamId;
+
+            if (!string.IsNullOrEmpty(board.ProjectId))
+                body["projectId"] = board.ProjectId;
+
+            return body.ToString(Newtonsoft.Json.Formatting.None);
         }
 
         /***************************************************/

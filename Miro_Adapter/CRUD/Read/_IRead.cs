@@ -1,33 +1,33 @@
 /*
  * This file is part of the Buildings and Habitats object Model (BHoM)
- * Copyright (c) 2015 - 2024, the respective contributors. All rights reserved.
+ * Copyright (c) 2015 - 2026, the respective contributors. All rights reserved.
  *
  * Each contributor holds copyright over their respective contributions.
  * The project versioning (Git) records all such contribution source information.
- *                                           
- *                                                                              
- * The BHoM is free software: you can redistribute it and/or modify         
- * it under the terms of the GNU Lesser General Public License as published by  
- * the Free Software Foundation, either version 3.0 of the License, or          
- * (at your option) any later version.                                          
- *                                                                              
- * The BHoM is distributed in the hope that it will be useful,              
- * but WITHOUT ANY WARRANTY; without even the implied warranty of               
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                 
- * GNU Lesser General Public License for more details.                          
- *                                                                            
- * You should have received a copy of the GNU Lesser General Public License     
- * along with this code. If not, see <https://www.gnu.org/licenses/lgpl-3.0.html>.      
+ *
+ *
+ * The BHoM is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3.0 of the License, or
+ * (at your option) any later version.
+ *
+ * The BHoM is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this code. If not, see <https://www.gnu.org/licenses/lgpl-3.0.html>.
  */
 
+using BH.Adapter;
 using BH.oM.Adapter;
+using BH.oM.Adapters.Miro;
 using BH.oM.Base;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace BH.Adapter.Miro
 {
@@ -37,26 +37,57 @@ namespace BH.Adapter.Miro
         /**** Adapter overload method                   ****/
         /***************************************************/
 
-        // This method gets called when appropriate by the Pull method contained in the base Adapter class.
-        // It gets called once per each Type.
         protected override IEnumerable<IBHoMObject> IRead(Type type, IList ids, ActionConfig actionConfig = null)
         {
-            // Preferrably, different Create logic for different object types should go in separate methods.
-            // We achieve this by using the ICreate method to only dynamically dispatching to *type-specific Create implementations*
-            // In other words:
-            // if (type == typeof(SomeType1))
-            //     return ReadSomeType1(ids as dynamic);
-            // else if (type == typeof(SomeType2))
-            //     return ReadSomeType2(ids as dynamic);
-            // else if (type == typeof(SomeType3))
-            //     return ReadSomeType3(ids as dynamic);
+            MiroConfig config = actionConfig as MiroConfig ?? new MiroConfig();
 
+            if (type == typeof(MiroBoard))
+                return ReadBoards(config);
+
+            if (type == typeof(MiroItem)
+                || type == typeof(MiroStickyNote)
+                || type == typeof(MiroShape)
+                || type == typeof(MiroText))
+            {
+                var specificIds = new List<string>();
+                if (!string.IsNullOrWhiteSpace(config.ItemId))
+                    specificIds.Add(config.ItemId);
+                if (ids != null && ids.Count > 0)
+                    specificIds.AddRange(ids.Cast<object>().Select(id => id?.ToString()).Where(id => !string.IsNullOrWhiteSpace(id)));
+
+                if (specificIds.Count > 0)
+                    return ReadSpecificItems(config.BoardId, specificIds);
+
+                return ReadItems(config);
+            }
+
+            BH.Engine.Base.Compute.RecordError($"Pull is not implemented in the Miro adapter for type '{type?.Name}'. \n" +
+                "Supported types are: MiroBoard, MiroItem, MiroStickyNote, MiroShape, MiroText.");
             return new List<IBHoMObject>();
         }
 
         /***************************************************/
+        /**** Private Methods                           ****/
+        /***************************************************/
 
+        private IEnumerable<IBHoMObject> ReadSpecificItems(string boardId, List<string> itemIds)
+        {
+            if (string.IsNullOrWhiteSpace(boardId))
+            {
+                BH.Engine.Base.Compute.RecordError("A BoardId must be provided in the MiroConfig to pull specific items from a board.");
+                return new List<IBHoMObject>();
+            }
+
+            var results = new List<IBHoMObject>();
+            foreach (string itemId in itemIds)
+            {
+                MiroItem item = ReadItem(boardId, itemId);
+                if (item != null)
+                    results.Add(item);
+            }
+            return results;
+        }
+
+        /***************************************************/
     }
 }
-
-

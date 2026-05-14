@@ -20,36 +20,37 @@
  * along with this code. If not, see <https://www.gnu.org/licenses/lgpl-3.0.html>.
  */
 
-using BH.Adapter;
-using BH.oM.Adapter;
-using BH.oM.Base;
-using System.Collections.Generic;
+using BH.oM.Adapters.Miro;
+using BH.oM.Base.Attributes;
+using System.ComponentModel;
 
-namespace BH.Adapter.Miro
+namespace BH.Engine.Adapters.Miro
 {
-    public partial class MiroAdapter : BHoMAdapter
+    public static partial class Create
     {
         /***************************************************/
-        /**** Adapter overload method                   ****/
+        /**** Public Methods                            ****/
         /***************************************************/
 
-        protected override bool ICreate<T>(IEnumerable<T> objects, ActionConfig actionConfig = null)
+        [Description("Creates a MiroTextStyle object defining the visual appearance of a text item.")]
+        [Input("colour", "Text colour as a hex code (e.g. '#1a1a1a').")]
+        [Input("fontSize", "Font size in dp.")]
+        [Input("textAlign", "Horizontal alignment of the text.")]
+        [Input("fillColour", "Background fill colour as a hex code, or 'transparent' for no background.")]
+        [Output("style", "A MiroTextStyle object to pass to the MiroText Create component.")]
+        public static MiroTextStyle MiroTextStyle(
+            string colour = "#1a1a1a",
+            int fontSize = 14,
+            MiroTextAlign textAlign = MiroTextAlign.Left,
+            string fillColour = "transparent")
         {
-            bool success = true;
-            foreach (T obj in objects)
+            return new MiroTextStyle
             {
-                success &= Create(obj as dynamic);
-            }
-            return success;
-        }
-
-        /***************************************************/
-
-        protected bool Create(IBHoMObject obj)
-        {
-            BH.Engine.Base.Compute.RecordError($"No specific Create method is implemented in the Miro adapter for objects of type '{obj?.GetType().Name}'. \n" +
-                "Supported types are: MiroBoard, MiroStickyNote, MiroShape, MiroText.");
-            return false;
+                Colour = colour,
+                FontSize = fontSize,
+                TextAlign = textAlign,
+                FillColour = fillColour
+            };
         }
 
         /***************************************************/
