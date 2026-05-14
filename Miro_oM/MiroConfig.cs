@@ -45,6 +45,9 @@ namespace BH.oM.Adapters.Miro
         [Description("Filter items by type when pulling items from a board. Use All to retrieve every item type.")]
         public virtual MiroItemType ItemType { get; set; } = MiroItemType.All;
 
+        [Description("Identifier of a specific Miro item to retrieve. When set, only that item is returned. Requires BoardId to be set.")]
+        public virtual string ItemId { get; set; } = "";
+
         /***************************************************/
     }
 }

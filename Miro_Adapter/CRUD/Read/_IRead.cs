@@ -49,8 +49,14 @@ namespace BH.Adapter.Miro
                 || type == typeof(MiroShape)
                 || type == typeof(MiroText))
             {
+                var specificIds = new List<string>();
+                if (!string.IsNullOrWhiteSpace(config.ItemId))
+                    specificIds.Add(config.ItemId);
                 if (ids != null && ids.Count > 0)
-                    return ReadSpecificItems(config.BoardId, ids.Cast<object>().Select(id => id?.ToString()).ToList());
+                    specificIds.AddRange(ids.Cast<object>().Select(id => id?.ToString()).Where(id => !string.IsNullOrWhiteSpace(id)));
+
+                if (specificIds.Count > 0)
+                    return ReadSpecificItems(config.BoardId, specificIds);
 
                 return ReadItems(config);
             }

@@ -32,27 +32,24 @@ namespace BH.Engine.Adapters.Miro
         /**** Public Methods                            ****/
         /***************************************************/
 
-        [Description("Creates a MiroConfig object used to supply optional parameters to Miro adapter Pull and Remove operations.")]
-        [Input("boardId", "Board identifier to target when pulling items or deleting items from a board.")]
-        [Input("teamId", "Team identifier used to filter boards when pulling boards.")]
-        [Input("limit", "Maximum number of results per request (1-50 for boards, 10-50 for items).")]
-        [Input("itemType", "Filter to restrict the item type returned when pulling items from a board.")]
-        [Input("itemId", "Identifier of a specific item to retrieve. When set, only that item is returned. Requires boardId to be set.")]
-        [Output("config", "A MiroConfig object to pass as the actionConfig parameter of Pull or Remove.")]
-        public static MiroConfig MiroConfig(
-            string boardId = "",
-            string teamId = "",
-            int limit = 50,
-            MiroItemType itemType = MiroItemType.All,
-            string itemId = "")
+        [Description("Creates a MiroTextStyle object defining the visual appearance of a text item.")]
+        [Input("colour", "Text colour as a hex code (e.g. '#1a1a1a').")]
+        [Input("fontSize", "Font size in dp.")]
+        [Input("textAlign", "Horizontal alignment of the text.")]
+        [Input("fillColour", "Background fill colour as a hex code, or 'transparent' for no background.")]
+        [Output("style", "A MiroTextStyle object to pass to the MiroText Create component.")]
+        public static MiroTextStyle MiroTextStyle(
+            string colour = "#1a1a1a",
+            int fontSize = 14,
+            MiroTextAlign textAlign = MiroTextAlign.Left,
+            string fillColour = "transparent")
         {
-            return new MiroConfig
+            return new MiroTextStyle
             {
-                BoardId = boardId,
-                TeamId = teamId,
-                Limit = limit,
-                ItemType = itemType,
-                ItemId = itemId
+                Colour = colour,
+                FontSize = fontSize,
+                TextAlign = textAlign,
+                FillColour = fillColour
             };
         }
 

@@ -112,7 +112,7 @@ Optional `MiroConfig` settings:
 
 ### Getting a Specific Item
 
-Pass the `MiroItemId` of the item in the IDs input of the `Pull` component, along with a `MiroConfig` with `boardId` set. Only that item will be returned.
+Create a `MiroConfig` with `boardId` set to the board the item belongs to and `itemId` set to the `MiroItemId` of the item you want. Connect that config to a `Pull` component with the item type set. Only that item will be returned.
 
 ---
 
@@ -169,6 +169,7 @@ The following shape types are available for the `MiroShape` component:
 | `teamId` | Optional filter when pulling boards |
 | `limit` | Controls how many results are returned per request |
 | `itemType` | Filters the type of items returned when pulling items |
+| `itemId` | Retrieves a single specific item by its ID (requires `boardId`) |
 
 ---
 

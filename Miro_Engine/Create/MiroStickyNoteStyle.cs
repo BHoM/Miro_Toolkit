@@ -32,27 +32,21 @@ namespace BH.Engine.Adapters.Miro
         /**** Public Methods                            ****/
         /***************************************************/
 
-        [Description("Creates a MiroConfig object used to supply optional parameters to Miro adapter Pull and Remove operations.")]
-        [Input("boardId", "Board identifier to target when pulling items or deleting items from a board.")]
-        [Input("teamId", "Team identifier used to filter boards when pulling boards.")]
-        [Input("limit", "Maximum number of results per request (1-50 for boards, 10-50 for items).")]
-        [Input("itemType", "Filter to restrict the item type returned when pulling items from a board.")]
-        [Input("itemId", "Identifier of a specific item to retrieve. When set, only that item is returned. Requires boardId to be set.")]
-        [Output("config", "A MiroConfig object to pass as the actionConfig parameter of Pull or Remove.")]
-        public static MiroConfig MiroConfig(
-            string boardId = "",
-            string teamId = "",
-            int limit = 50,
-            MiroItemType itemType = MiroItemType.All,
-            string itemId = "")
+        [Description("Creates a MiroStickyNoteStyle object defining the visual appearance of a sticky note.")]
+        [Input("fillColour", "Background colour of the sticky note chosen from the named colour list.")]
+        [Input("textAlign", "Horizontal alignment of the text within the sticky note.")]
+        [Input("textAlignVertical", "Vertical alignment of the text within the sticky note.")]
+        [Output("style", "A MiroStickyNoteStyle object to pass to the MiroStickyNote Create component.")]
+        public static MiroStickyNoteStyle MiroStickyNoteStyle(
+            MiroStickyNoteColour fillColour = MiroStickyNoteColour.LightYellow,
+            MiroTextAlign textAlign = MiroTextAlign.Center,
+            MiroTextAlignVertical textAlignVertical = MiroTextAlignVertical.Top)
         {
-            return new MiroConfig
+            return new MiroStickyNoteStyle
             {
-                BoardId = boardId,
-                TeamId = teamId,
-                Limit = limit,
-                ItemType = itemType,
-                ItemId = itemId
+                FillColour = fillColour,
+                TextAlign = textAlign,
+                TextAlignVertical = textAlignVertical
             };
         }
 
