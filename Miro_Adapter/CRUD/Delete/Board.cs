@@ -21,35 +21,25 @@
  */
 
 using BH.Adapter;
-using BH.oM.Adapter;
-using BH.oM.Base;
-using System.Collections.Generic;
+using BH.oM.Adapters.Miro;
 
 namespace BH.Adapter.Miro
 {
     public partial class MiroAdapter : BHoMAdapter
     {
         /***************************************************/
-        /**** Adapter overload method                   ****/
+        /**** Private Methods - Delete                  ****/
         /***************************************************/
 
-        protected override bool ICreate<T>(IEnumerable<T> objects, ActionConfig actionConfig = null)
+        private bool DeleteBoard(string boardId)
         {
-            bool success = true;
-            foreach (T obj in objects)
+            if (string.IsNullOrWhiteSpace(boardId))
             {
-                success &= Create(obj as dynamic);
+                BH.Engine.Base.Compute.RecordError("A board identifier is required to delete a Miro board.");
+                return false;
             }
-            return success;
-        }
 
-        /***************************************************/
-
-        protected bool Create(IBHoMObject obj)
-        {
-            BH.Engine.Base.Compute.RecordError($"No specific Create method is implemented in the Miro adapter for objects of type '{obj?.GetType().Name}'. \n" +
-                "Supported types are: MiroBoard, MiroStickyNote, MiroShape, MiroText.");
-            return false;
+            return BH.Engine.Adapters.Miro.Compute.Delete($"{m_BaseUrl}/boards/{boardId}", m_Token);
         }
 
         /***************************************************/

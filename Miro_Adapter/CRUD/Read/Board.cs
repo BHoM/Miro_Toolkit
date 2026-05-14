@@ -21,8 +21,7 @@
  */
 
 using BH.Adapter;
-using BH.oM.Adapter;
-using BH.oM.Base;
+using BH.oM.Adapters.Miro;
 using System.Collections.Generic;
 
 namespace BH.Adapter.Miro
@@ -30,26 +29,27 @@ namespace BH.Adapter.Miro
     public partial class MiroAdapter : BHoMAdapter
     {
         /***************************************************/
-        /**** Adapter overload method                   ****/
+        /**** Private Methods - Read                    ****/
         /***************************************************/
 
-        protected override bool ICreate<T>(IEnumerable<T> objects, ActionConfig actionConfig = null)
+        private List<MiroBoard> ReadBoards(MiroConfig config = null)
         {
-            bool success = true;
-            foreach (T obj in objects)
+            int limit = config?.Limit > 0 ? System.Math.Min(config.Limit, 50) : 50;
+
+            var queryParams = new Dictionary<string, string>
             {
-                success &= Create(obj as dynamic);
-            }
-            return success;
-        }
+                ["limit"] = limit.ToString()
+            };
 
-        /***************************************************/
+            if (!string.IsNullOrEmpty(config?.TeamId))
+                queryParams["team_id"] = config.TeamId;
 
-        protected bool Create(IBHoMObject obj)
-        {
-            BH.Engine.Base.Compute.RecordError($"No specific Create method is implemented in the Miro adapter for objects of type '{obj?.GetType().Name}'. \n" +
-                "Supported types are: MiroBoard, MiroStickyNote, MiroShape, MiroText.");
-            return false;
+            string response = BH.Engine.Adapters.Miro.Compute.Get($"{m_BaseUrl}/boards", m_Token, queryParams);
+
+            if (response == null)
+                return new List<MiroBoard>();
+
+            return response.BoardsFromMiro();
         }
 
         /***************************************************/

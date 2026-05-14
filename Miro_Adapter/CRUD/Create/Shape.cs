@@ -21,35 +21,42 @@
  */
 
 using BH.Adapter;
-using BH.oM.Adapter;
-using BH.oM.Base;
-using System.Collections.Generic;
+using BH.oM.Adapters.Miro;
 
 namespace BH.Adapter.Miro
 {
     public partial class MiroAdapter : BHoMAdapter
     {
         /***************************************************/
-        /**** Adapter overload method                   ****/
+        /**** Private Methods - Create                  ****/
         /***************************************************/
 
-        protected override bool ICreate<T>(IEnumerable<T> objects, ActionConfig actionConfig = null)
+        private bool Create(MiroShape shape)
         {
-            bool success = true;
-            foreach (T obj in objects)
+            if (shape == null)
             {
-                success &= Create(obj as dynamic);
+                BH.Engine.Base.Compute.RecordError("Cannot create a null MiroShape.");
+                return false;
             }
-            return success;
-        }
 
-        /***************************************************/
+            if (string.IsNullOrWhiteSpace(shape.BoardId))
+            {
+                BH.Engine.Base.Compute.RecordError("MiroShape.BoardId must be set before pushing to the Miro adapter.");
+                return false;
+            }
 
-        protected bool Create(IBHoMObject obj)
-        {
-            BH.Engine.Base.Compute.RecordError($"No specific Create method is implemented in the Miro adapter for objects of type '{obj?.GetType().Name}'. \n" +
-                "Supported types are: MiroBoard, MiroStickyNote, MiroShape, MiroText.");
-            return false;
+            string json = shape.ToMiro();
+            string response = BH.Engine.Adapters.Miro.Compute.Post(
+                $"{m_BaseUrl}/boards/{shape.BoardId}/shapes", m_Token, json);
+
+            if (response == null)
+                return false;
+
+            MiroItem created = response.ItemFromMiro();
+            if (created != null)
+                shape.MiroItemId = created.MiroItemId;
+
+            return created != null;
         }
 
         /***************************************************/

@@ -20,37 +20,23 @@
  * along with this code. If not, see <https://www.gnu.org/licenses/lgpl-3.0.html>.
  */
 
-using BH.Adapter;
-using BH.oM.Adapter;
-using BH.oM.Base;
-using System.Collections.Generic;
+using System.ComponentModel;
 
-namespace BH.Adapter.Miro
+namespace BH.oM.Adapters.Miro
 {
-    public partial class MiroAdapter : BHoMAdapter
+    [Description("A free-standing text item on a Miro board. Text items are useful for headings, \n" +
+        "annotations, and labels that are not attached to a shape or sticky note.")]
+    public class MiroText : MiroItem
     {
         /***************************************************/
-        /**** Adapter overload method                   ****/
+        /**** Properties                                ****/
         /***************************************************/
 
-        protected override bool ICreate<T>(IEnumerable<T> objects, ActionConfig actionConfig = null)
-        {
-            bool success = true;
-            foreach (T obj in objects)
-            {
-                success &= Create(obj as dynamic);
-            }
-            return success;
-        }
+        [Description("HTML text content of the text item. Miro wraps plain strings in a <p> tag automatically.")]
+        public virtual string Content { get; set; } = "";
 
-        /***************************************************/
-
-        protected bool Create(IBHoMObject obj)
-        {
-            BH.Engine.Base.Compute.RecordError($"No specific Create method is implemented in the Miro adapter for objects of type '{obj?.GetType().Name}'. \n" +
-                "Supported types are: MiroBoard, MiroStickyNote, MiroShape, MiroText.");
-            return false;
-        }
+        [Description("Visual style properties controlling the colour, font size, and alignment of the text.")]
+        public virtual MiroTextStyle Style { get; set; } = new MiroTextStyle();
 
         /***************************************************/
     }

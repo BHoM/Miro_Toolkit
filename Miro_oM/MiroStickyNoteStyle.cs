@@ -20,37 +20,25 @@
  * along with this code. If not, see <https://www.gnu.org/licenses/lgpl-3.0.html>.
  */
 
-using BH.Adapter;
-using BH.oM.Adapter;
-using BH.oM.Base;
-using System.Collections.Generic;
+using System.ComponentModel;
 
-namespace BH.Adapter.Miro
+namespace BH.oM.Adapters.Miro
 {
-    public partial class MiroAdapter : BHoMAdapter
+    [Description("Visual style properties for a Miro sticky note item.")]
+    public class MiroStickyNoteStyle
     {
         /***************************************************/
-        /**** Adapter overload method                   ****/
+        /**** Properties                                ****/
         /***************************************************/
 
-        protected override bool ICreate<T>(IEnumerable<T> objects, ActionConfig actionConfig = null)
-        {
-            bool success = true;
-            foreach (T obj in objects)
-            {
-                success &= Create(obj as dynamic);
-            }
-            return success;
-        }
+        [Description("Background fill colour of the sticky note.")]
+        public virtual MiroStickyNoteColour FillColour { get; set; } = MiroStickyNoteColour.LightYellow;
 
-        /***************************************************/
+        [Description("Horizontal alignment of the text content within the sticky note.")]
+        public virtual MiroTextAlign TextAlign { get; set; } = MiroTextAlign.Center;
 
-        protected bool Create(IBHoMObject obj)
-        {
-            BH.Engine.Base.Compute.RecordError($"No specific Create method is implemented in the Miro adapter for objects of type '{obj?.GetType().Name}'. \n" +
-                "Supported types are: MiroBoard, MiroStickyNote, MiroShape, MiroText.");
-            return false;
-        }
+        [Description("Vertical alignment of the text content within the sticky note.")]
+        public virtual MiroTextAlignVertical TextAlignVertical { get; set; } = MiroTextAlignVertical.Top;
 
         /***************************************************/
     }

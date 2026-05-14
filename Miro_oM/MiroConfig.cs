@@ -20,37 +20,30 @@
  * along with this code. If not, see <https://www.gnu.org/licenses/lgpl-3.0.html>.
  */
 
-using BH.Adapter;
 using BH.oM.Adapter;
-using BH.oM.Base;
-using System.Collections.Generic;
+using System.ComponentModel;
 
-namespace BH.Adapter.Miro
+namespace BH.oM.Adapters.Miro
 {
-    public partial class MiroAdapter : BHoMAdapter
+    [Description("Configuration options for Miro adapter Pull and Remove operations.")]
+    public class MiroConfig : ActionConfig
     {
         /***************************************************/
-        /**** Adapter overload method                   ****/
+        /**** Properties                                ****/
         /***************************************************/
 
-        protected override bool ICreate<T>(IEnumerable<T> objects, ActionConfig actionConfig = null)
-        {
-            bool success = true;
-            foreach (T obj in objects)
-            {
-                success &= Create(obj as dynamic);
-            }
-            return success;
-        }
+        [Description("Identifier of the Miro board to target for item operations (Pull items, Delete item). \n" +
+            "Required when pulling items from a specific board.")]
+        public virtual string BoardId { get; set; } = "";
 
-        /***************************************************/
+        [Description("Filter boards by team identifier when pulling boards.")]
+        public virtual string TeamId { get; set; } = "";
 
-        protected bool Create(IBHoMObject obj)
-        {
-            BH.Engine.Base.Compute.RecordError($"No specific Create method is implemented in the Miro adapter for objects of type '{obj?.GetType().Name}'. \n" +
-                "Supported types are: MiroBoard, MiroStickyNote, MiroShape, MiroText.");
-            return false;
-        }
+        [Description("Maximum number of results to return per request (1-50 for boards, 10-50 for items).")]
+        public virtual int Limit { get; set; } = 50;
+
+        [Description("Filter items by type when pulling items from a board. Use All to retrieve every item type.")]
+        public virtual MiroItemType ItemType { get; set; } = MiroItemType.All;
 
         /***************************************************/
     }

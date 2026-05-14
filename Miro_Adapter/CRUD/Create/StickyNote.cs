@@ -21,35 +21,42 @@
  */
 
 using BH.Adapter;
-using BH.oM.Adapter;
-using BH.oM.Base;
-using System.Collections.Generic;
+using BH.oM.Adapters.Miro;
 
 namespace BH.Adapter.Miro
 {
     public partial class MiroAdapter : BHoMAdapter
     {
         /***************************************************/
-        /**** Adapter overload method                   ****/
+        /**** Private Methods - Create                  ****/
         /***************************************************/
 
-        protected override bool ICreate<T>(IEnumerable<T> objects, ActionConfig actionConfig = null)
+        private bool Create(MiroStickyNote note)
         {
-            bool success = true;
-            foreach (T obj in objects)
+            if (note == null)
             {
-                success &= Create(obj as dynamic);
+                BH.Engine.Base.Compute.RecordError("Cannot create a null MiroStickyNote.");
+                return false;
             }
-            return success;
-        }
 
-        /***************************************************/
+            if (string.IsNullOrWhiteSpace(note.BoardId))
+            {
+                BH.Engine.Base.Compute.RecordError("MiroStickyNote.BoardId must be set before pushing to the Miro adapter.");
+                return false;
+            }
 
-        protected bool Create(IBHoMObject obj)
-        {
-            BH.Engine.Base.Compute.RecordError($"No specific Create method is implemented in the Miro adapter for objects of type '{obj?.GetType().Name}'. \n" +
-                "Supported types are: MiroBoard, MiroStickyNote, MiroShape, MiroText.");
-            return false;
+            string json = note.ToMiro();
+            string response = BH.Engine.Adapters.Miro.Compute.Post(
+                $"{m_BaseUrl}/boards/{note.BoardId}/sticky_notes", m_Token, json);
+
+            if (response == null)
+                return false;
+
+            MiroItem created = response.ItemFromMiro();
+            if (created != null)
+                note.MiroItemId = created.MiroItemId;
+
+            return created != null;
         }
 
         /***************************************************/

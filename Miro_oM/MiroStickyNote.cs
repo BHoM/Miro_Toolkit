@@ -20,37 +20,26 @@
  * along with this code. If not, see <https://www.gnu.org/licenses/lgpl-3.0.html>.
  */
 
-using BH.Adapter;
-using BH.oM.Adapter;
-using BH.oM.Base;
-using System.Collections.Generic;
+using System.ComponentModel;
 
-namespace BH.Adapter.Miro
+namespace BH.oM.Adapters.Miro
 {
-    public partial class MiroAdapter : BHoMAdapter
+    [Description("A sticky note item on a Miro board. Sticky notes are the primary medium for capturing \n" +
+        "ideas during brainstorming sessions and can be positioned freely on the board canvas.")]
+    public class MiroStickyNote : MiroItem
     {
         /***************************************************/
-        /**** Adapter overload method                   ****/
+        /**** Properties                                ****/
         /***************************************************/
 
-        protected override bool ICreate<T>(IEnumerable<T> objects, ActionConfig actionConfig = null)
-        {
-            bool success = true;
-            foreach (T obj in objects)
-            {
-                success &= Create(obj as dynamic);
-            }
-            return success;
-        }
+        [Description("Text content of the sticky note. Supports plain text; HTML tags are stripped by Miro.")]
+        public virtual string Content { get; set; } = "";
 
-        /***************************************************/
+        [Description("Shape of the sticky note canvas area.")]
+        public virtual MiroStickyNoteShape Shape { get; set; } = MiroStickyNoteShape.Square;
 
-        protected bool Create(IBHoMObject obj)
-        {
-            BH.Engine.Base.Compute.RecordError($"No specific Create method is implemented in the Miro adapter for objects of type '{obj?.GetType().Name}'. \n" +
-                "Supported types are: MiroBoard, MiroStickyNote, MiroShape, MiroText.");
-            return false;
-        }
+        [Description("Visual style properties controlling the colour and text alignment of the sticky note.")]
+        public virtual MiroStickyNoteStyle Style { get; set; } = new MiroStickyNoteStyle();
 
         /***************************************************/
     }

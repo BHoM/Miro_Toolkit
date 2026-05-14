@@ -20,37 +20,28 @@
  * along with this code. If not, see <https://www.gnu.org/licenses/lgpl-3.0.html>.
  */
 
-using BH.Adapter;
-using BH.oM.Adapter;
-using BH.oM.Base;
-using System.Collections.Generic;
+using System.ComponentModel;
 
-namespace BH.Adapter.Miro
+namespace BH.oM.Adapters.Miro
 {
-    public partial class MiroAdapter : BHoMAdapter
+    [Description("Visual style properties for a Miro text item.")]
+    public class MiroTextStyle
     {
         /***************************************************/
-        /**** Adapter overload method                   ****/
+        /**** Properties                                ****/
         /***************************************************/
 
-        protected override bool ICreate<T>(IEnumerable<T> objects, ActionConfig actionConfig = null)
-        {
-            bool success = true;
-            foreach (T obj in objects)
-            {
-                success &= Create(obj as dynamic);
-            }
-            return success;
-        }
+        [Description("Text colour as a hexadecimal colour code (e.g. '#1a1a1a').")]
+        public virtual string Colour { get; set; } = "#1a1a1a";
 
-        /***************************************************/
+        [Description("Font size of the text content in dp.")]
+        public virtual int FontSize { get; set; } = 14;
 
-        protected bool Create(IBHoMObject obj)
-        {
-            BH.Engine.Base.Compute.RecordError($"No specific Create method is implemented in the Miro adapter for objects of type '{obj?.GetType().Name}'. \n" +
-                "Supported types are: MiroBoard, MiroStickyNote, MiroShape, MiroText.");
-            return false;
-        }
+        [Description("Horizontal alignment of the text content.")]
+        public virtual MiroTextAlign TextAlign { get; set; } = MiroTextAlign.Left;
+
+        [Description("Background fill colour of the text box as a hexadecimal colour code, or 'transparent' for no background.")]
+        public virtual string FillColour { get; set; } = "transparent";
 
         /***************************************************/
     }
